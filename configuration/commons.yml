@@ -1,0 +1,14 @@
+endpoints:
+- path: get_current_tenant
+  description: Get the current tenant, the company I am connected on
+- path: set_tenant
+  description: Set a tenant or switch to another one
+- path: send_confirmation_mail
+  description: Send an email related to an executed operation
+- path: create_a_new_tenant
+  description: Create a new tenant or create a new company or business or association
+fields:
+- name: CardCode
+  properties:
+  - mandatory
+  - number

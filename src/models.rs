@@ -55,5 +55,5 @@ pub struct Endpoint {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Entity {
     pub endpoints: Vec<Endpoint>,
-    pub fields: Vec<Field>,
+    pub fields: Option<Vec<Field>>,
 }
