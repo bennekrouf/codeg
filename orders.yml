@@ -1,0 +1,364 @@
+endpoints:
+- path: get_a_list_of_last_orders
+  description: Retrieve a list of last orders
+- path: create_new_order
+  description: Create a new order
+- path: update_order
+  description: Update an existing order
+- path: delete_order
+  description: Delete an order
+fields:
+- name: CardCode
+  properties:
+  - mandatory
+  - number
+- name: CardName
+  properties:
+  - mandatory
+- name: CardType
+  properties:
+  - mandatory
+- name: GroupCode
+  properties:
+  - mandatory
+  - number
+- name: Address
+  properties:
+  - mandatory
+- name: ZipCode
+  properties:
+  - mandatory
+- name: MailAddres
+  properties:
+  - mandatory
+- name: MailZipCod
+  properties:
+  - mandatory
+- name: Phone1
+  properties:
+  - mandatory
+- name: Phone2
+  properties:
+  - mandatory
+- name: Fax
+  properties:
+  - mandatory
+- name: CntctPrsn
+  properties: []
+- name: Notes
+  properties:
+  - mandatory
+- name: Balance
+  properties:
+  - mandatory
+  - number
+- name: ChecksBal
+  properties:
+  - mandatory
+  - number
+- name: DNotesBal
+  properties:
+  - mandatory
+  - number
+- name: OrdersBal
+  properties:
+  - mandatory
+  - number
+- name: GroupNum
+  properties:
+  - mandatory
+  - number
+- name: Discount
+  properties:
+  - mandatory
+- name: VatStatus
+  properties:
+  - mandatory
+- name: LicTradNum
+  properties:
+  - mandatory
+- name: ListNum
+  properties:
+  - mandatory
+  - number
+- name: DNoteBalFC
+  properties:
+  - mandatory
+  - number
+- name: OrderBalFC
+  properties:
+  - mandatory
+  - number
+- name: DNoteBalSy
+  properties:
+  - mandatory
+  - number
+- name: OrderBalSy
+  properties:
+  - mandatory
+  - number
+- name: IntrstRate
+  properties:
+  - mandatory
+- name: Free_Text
+  properties:
+  - mandatory
+- name: SlpCode
+  properties:
+  - mandatory
+  - number
+- name: Currency
+  properties:
+  - mandatory
+- name: BalanceSys
+  properties:
+  - mandatory
+  - number
+- name: BalanceFC
+  properties:
+  - mandatory
+  - number
+- name: Cellular
+  properties:
+  - mandatory
+- name: City
+  properties:
+  - mandatory
+- name: County
+  properties:
+  - mandatory
+- name: Country
+  properties:
+  - mandatory
+- name: MailCity
+  properties:
+  - mandatory
+- name: MailCounty
+  properties:
+  - mandatory
+- name: MailCountr
+  properties:
+  - mandatory
+- name: E_Mail
+  properties:
+  - mandatory
+- name: DflAccount
+  properties: []
+- name: DflBranch
+  properties: []
+- name: BankCode
+  properties: []
+- name: CardFName
+  properties:
+  - mandatory
+- name: QryGroup1
+  properties:
+  - mandatory
+- name: QryGroup2
+  properties:
+  - mandatory
+- name: QryGroup4
+  properties:
+  - mandatory
+- name: QryGroup5
+  properties:
+  - mandatory
+- name: QryGroup6
+  properties:
+  - mandatory
+- name: QryGroup7
+  properties:
+  - mandatory
+- name: QryGroup8
+  properties:
+  - mandatory
+- name: QryGroup9
+  properties:
+  - mandatory
+- name: QryGroup10
+  properties:
+  - mandatory
+- name: CreateDate
+  properties:
+  - mandatory
+- name: UpdateDate
+  properties:
+  - mandatory
+- name: SPGCounter
+  properties:
+  - mandatory
+  - number
+- name: SPPCounter
+  properties:
+  - mandatory
+  - number
+- name: DataSource
+  properties:
+  - mandatory
+- name: OprCount
+  properties:
+  - mandatory
+- name: CrCardNum
+  properties:
+  - mandatory
+- name: UserSign
+  properties:
+  - mandatory
+  - number
+- name: validFor
+  properties:
+  - mandatory
+- name: frozenFor
+  properties:
+  - mandatory
+- name: ValidComm
+  properties:
+  - mandatory
+- name: FrozenComm
+  properties:
+  - mandatory
+- name: State1
+  properties: []
+- name: State2
+  properties:
+  - mandatory
+- name: DebPayAcct
+  properties:
+  - mandatory
+  - number
+- name: ShipToDef
+  properties:
+  - mandatory
+- name: Block
+  properties:
+  - mandatory
+- name: MailBlock
+  properties:
+  - mandatory
+- name: Password
+  properties:
+  - mandatory
+- name: ECVatGroup
+  properties:
+  - mandatory
+- name: DocEntry
+  properties:
+  - mandatory
+  - number
+- name: PymCode
+  properties:
+  - mandatory
+- name: DunnLevel
+  properties:
+  - mandatory
+- name: DunnDate
+  properties:
+  - mandatory
+- name: BlockDunn
+  properties:
+  - mandatory
+- name: BankCountr
+  properties: []
+- name: SinglePaym
+  properties:
+  - mandatory
+- name: ISRBillId
+  properties: []
+- name: HouseBank
+  properties:
+  - mandatory
+  - number
+- name: HousBnkAct
+  properties:
+  - mandatory
+- name: WTLiable
+  properties:
+  - mandatory
+- name: DunTerm
+  properties: []
+- name: BillToDef
+  properties:
+  - mandatory
+- name: DpmClear
+  properties:
+  - mandatory
+- name: IntrntSite
+  properties:
+  - mandatory
+- name: LangCode
+  properties:
+  - mandatory
+  - number
+- name: HousActKey
+  properties:
+  - mandatory
+  - number
+- name: DflBankKey
+  properties:
+  - mandatory
+- name: StreetNo
+  properties:
+  - mandatory
+- name: OpCode347
+  properties:
+  - mandatory
+- name: DpmIntAct
+  properties:
+  - mandatory
+- name: UserSign2
+  properties:
+  - mandatory
+- name: HsBnkSwift
+  properties:
+  - mandatory
+- name: HsBnkIBAN
+  properties:
+  - mandatory
+- name: DflSwift
+  properties: []
+- name: AutoPost
+  properties:
+  - mandatory
+- name: DflIBAN
+  properties: []
+- name: Series
+  properties:
+  - mandatory
+  - number
+- name: Number
+  properties:
+  - mandatory
+- name: Attachment
+  properties:
+  - mandatory
+- name: AtcEntry
+  properties:
+  - mandatory
+- name: GlblLocNum
+  properties:
+  - mandatory
+- name: ExpnPrfFnd
+  properties:
+  - mandatory
+- name: EdrsFromBP
+  properties:
+  - mandatory
+- name: CreateTS
+  properties:
+  - mandatory
+  - number
+- name: UpdateTS
+  properties:
+  - mandatory
+- name: U_SWA_PYAC
+  properties:
+  - mandatory
+- name: U_AGL_CIVI
+  properties:
+  - mandatory
+- name: U_AGL_TAUXCOMMER
+  properties:
+  - mandatory
+- name: U_SWA_PI_EBill
+  properties:
+  - mandatory
