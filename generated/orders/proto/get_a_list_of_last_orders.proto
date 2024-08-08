@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-service get_a_list_of_last_orders {
-    rpc get_a_list_of_last_orders (Empty) returns (Empty);
-}
-
-message Empty {}

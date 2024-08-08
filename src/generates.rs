@@ -2,6 +2,7 @@
 use std::{env, fs};
 use std::io::Write;
 
+use crate::generate_cargo_toml::generate_cargo_toml;
 use crate::generate_endpoint::generate_endpoint;
 use crate::generate_main::generate_main;
 use crate::generate_proto::generate_proto;
@@ -10,9 +11,11 @@ use crate::models::Endpoint;
 pub fn generates(endpoints: &[Endpoint], file_stem: &str) -> std::io::Result<()> {
     let current_dir = env::current_dir()?;
 
-    // Define the output directories, incorporating file_stem
-    let code_dir = current_dir.join(format!("generated/{}/endpoints", file_stem));
-    let proto_dir = current_dir.join(format!("generated/{}/proto", file_stem));
+    // Define the output directories, incorporating file_stem within the src subdirectory
+    let file_stem_dir = current_dir.join(format!("generated/src/{}", file_stem));
+    let code_dir = file_stem_dir.join("endpoints");
+    let proto_dir = file_stem_dir.join("proto");
+    let generated_src_dir = current_dir.join("generated/src");
     let generated_dir = current_dir.join("generated");
 
     // Ensure the directories exist
@@ -33,16 +36,27 @@ pub fn generates(endpoints: &[Endpoint], file_stem: &str) -> std::io::Result<()>
         mod_rs_content.push_str(&format!("pub mod {};\n", endpoint.path.replace("-", "_")));
     }
 
-    // Write the `mod.rs` file for the specific file_stem
+    // Write the `mod.rs` file for the specific file_stem in the `endpoints` directory
     let mod_rs_path = code_dir.join("mod.rs");
     let mut mod_rs_file = fs::File::create(mod_rs_path)?;
     mod_rs_file.write_all(mod_rs_content.as_bytes())?;
 
+    // Generate a `mod.rs` file in the `generated/src/[file_stem]` directory that contains "mod endpoints;"
+    let file_stem_mod_rs_path = file_stem_dir.join("mod.rs");
+    let mut file_stem_mod_rs_file = fs::File::create(file_stem_mod_rs_path)?;
+    file_stem_mod_rs_file.write_all(b"mod endpoints;\n")?;
+
     // Collect all file_stems for later use in generating the main.rs file
     let file_stems = vec![file_stem];
 
-    // Generate the main.rs file at the root of the generated directory
-    generate_main(&generated_dir, &file_stems)?;
+    // Generate the main.rs file in the `src` subdirectory
+    generate_main(&generated_src_dir, &file_stems)?;
+
+    // Generate the Cargo.toml file if it doesn't already exist
+    let cargo_toml_path = generated_dir.join("Cargo.toml");
+    if !cargo_toml_path.exists() {
+        generate_cargo_toml(file_stem, &generated_dir)?;
+    }
 
     Ok(())
 }

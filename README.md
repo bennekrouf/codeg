@@ -1,6 +1,6 @@
 
 
-In the root of the folder, you put a orders.yml file with the content like :
+In the root of the folder, create a folder configuration where you put a yml files with the content like :
 
 endpoints:
 - path: get_a_list_of_last_orders

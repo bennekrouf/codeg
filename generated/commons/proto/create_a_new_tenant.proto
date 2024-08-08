@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-service create_a_new_tenant {
-    rpc create_a_new_tenant (Empty) returns (Empty);
-}
-
-message Empty {}

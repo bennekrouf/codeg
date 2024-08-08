@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-service delete_order {
-    rpc delete_order (Empty) returns (Empty);
-}
-
-message Empty {}

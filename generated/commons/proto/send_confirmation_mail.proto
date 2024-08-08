@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-service send_confirmation_mail {
-    rpc send_confirmation_mail (Empty) returns (Empty);
-}
-
-message Empty {}

@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-service update_order {
-    rpc update_order (Empty) returns (Empty);
-}
-
-message Empty {}

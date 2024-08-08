@@ -10,6 +10,7 @@ mod generates;
 mod generate_proto;
 mod generate_main;
 mod generate_endpoint;
+mod generate_cargo_toml;
 
 fn main() {
     // Define the configuration directory
