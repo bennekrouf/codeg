@@ -1,12 +1,45 @@
 endpoints:
-- path: get_a_list_of_last_orders
+- path: get_a_list_of_orders
   description: Retrieve a list of last orders
+  parameters: []
+  response:
+    type: List of orders
 - path: create_new_order
   description: Create a new order
+  parameters:
+  - name: order_name
+    type: string
+    description: Name of the order to create
+    required: true
+  response:
+    type: order confirmation
 - path: update_order
   description: Update an existing order
+  parameters:
+  - name: id
+    type: string
+    description: ID of the order to update
+    required: true
+  response:
+    type: Update confirmation for order
 - path: delete_order
-  description: Delete an order
+  description: Delete a order
+  parameters:
+  - name: id
+    type: string
+    description: ID of the order to delete
+    required: true
+  response:
+    type: Deletion confirmation for order
+- path: send_an_email_related_to_order
+  description: Send an email related to a order
+  parameters:
+  - name: email
+    type: string
+    description: Email address to send the notification to about the order
+    required: true
+  response:
+    type: Email sent confirmation for order
 fields:
 - name: CardCode
   properties:
@@ -28,24 +61,11 @@ fields:
 - name: ZipCode
   properties:
   - mandatory
-- name: MailAddres
-  properties:
-  - mandatory
-- name: MailZipCod
-  properties:
-  - mandatory
+  - number
 - name: Phone1
   properties:
   - mandatory
-- name: Phone2
-  properties:
-  - mandatory
-- name: Fax
-  properties:
-  - mandatory
 - name: CntctPrsn
-  properties: []
-- name: Notes
   properties:
   - mandatory
 - name: Balance
@@ -68,20 +88,10 @@ fields:
   properties:
   - mandatory
   - number
-- name: Discount
-  properties:
-  - mandatory
 - name: VatStatus
   properties:
   - mandatory
-- name: LicTradNum
-  properties:
-  - mandatory
 - name: ListNum
-  properties:
-  - mandatory
-  - number
-- name: DNoteBalFC
   properties:
   - mandatory
   - number
@@ -100,9 +110,7 @@ fields:
 - name: IntrstRate
   properties:
   - mandatory
-- name: Free_Text
-  properties:
-  - mandatory
+  - number
 - name: SlpCode
   properties:
   - mandatory
@@ -124,58 +132,10 @@ fields:
 - name: City
   properties:
   - mandatory
-- name: County
-  properties:
-  - mandatory
-- name: Country
-  properties:
-  - mandatory
-- name: MailCity
-  properties:
-  - mandatory
-- name: MailCounty
-  properties:
-  - mandatory
-- name: MailCountr
-  properties:
-  - mandatory
 - name: E_Mail
   properties:
   - mandatory
-- name: DflAccount
-  properties: []
-- name: DflBranch
-  properties: []
-- name: BankCode
-  properties: []
 - name: CardFName
-  properties:
-  - mandatory
-- name: QryGroup1
-  properties:
-  - mandatory
-- name: QryGroup2
-  properties:
-  - mandatory
-- name: QryGroup4
-  properties:
-  - mandatory
-- name: QryGroup5
-  properties:
-  - mandatory
-- name: QryGroup6
-  properties:
-  - mandatory
-- name: QryGroup7
-  properties:
-  - mandatory
-- name: QryGroup8
-  properties:
-  - mandatory
-- name: QryGroup9
-  properties:
-  - mandatory
-- name: QryGroup10
   properties:
   - mandatory
 - name: CreateDate
@@ -184,58 +144,15 @@ fields:
 - name: UpdateDate
   properties:
   - mandatory
-- name: SPGCounter
-  properties:
-  - mandatory
-  - number
-- name: SPPCounter
-  properties:
-  - mandatory
-  - number
-- name: DataSource
-  properties:
-  - mandatory
-- name: OprCount
-  properties:
-  - mandatory
-- name: CrCardNum
-  properties:
-  - mandatory
 - name: UserSign
   properties:
   - mandatory
   - number
-- name: validFor
-  properties:
-  - mandatory
-- name: frozenFor
-  properties:
-  - mandatory
-- name: ValidComm
-  properties:
-  - mandatory
-- name: FrozenComm
-  properties:
-  - mandatory
-- name: State1
-  properties: []
-- name: State2
-  properties:
-  - mandatory
 - name: DebPayAcct
   properties:
   - mandatory
   - number
-- name: ShipToDef
-  properties:
-  - mandatory
 - name: Block
-  properties:
-  - mandatory
-- name: MailBlock
-  properties:
-  - mandatory
-- name: Password
   properties:
   - mandatory
 - name: ECVatGroup
@@ -251,76 +168,35 @@ fields:
 - name: DunnLevel
   properties:
   - mandatory
-- name: DunnDate
-  properties:
-  - mandatory
 - name: BlockDunn
   properties:
   - mandatory
 - name: BankCountr
-  properties: []
+  properties:
+  - mandatory
 - name: SinglePaym
   properties:
   - mandatory
-- name: ISRBillId
-  properties: []
-- name: HouseBank
-  properties:
-  - mandatory
-  - number
-- name: HousBnkAct
-  properties:
-  - mandatory
-- name: WTLiable
-  properties:
-  - mandatory
-- name: DunTerm
-  properties: []
 - name: BillToDef
   properties:
   - mandatory
 - name: DpmClear
   properties:
   - mandatory
-- name: IntrntSite
-  properties:
-  - mandatory
 - name: LangCode
   properties:
   - mandatory
   - number
-- name: HousActKey
-  properties:
-  - mandatory
-  - number
-- name: DflBankKey
-  properties:
-  - mandatory
-- name: StreetNo
-  properties:
-  - mandatory
 - name: OpCode347
-  properties:
-  - mandatory
-- name: DpmIntAct
   properties:
   - mandatory
 - name: UserSign2
   properties:
   - mandatory
-- name: HsBnkSwift
-  properties:
-  - mandatory
-- name: HsBnkIBAN
-  properties:
-  - mandatory
-- name: DflSwift
-  properties: []
+  - number
 - name: AutoPost
   properties:
   - mandatory
-- name: DflIBAN
-  properties: []
 - name: Series
   properties:
   - mandatory
@@ -328,19 +204,8 @@ fields:
 - name: Number
   properties:
   - mandatory
-- name: Attachment
-  properties:
-  - mandatory
-- name: AtcEntry
-  properties:
-  - mandatory
-- name: GlblLocNum
-  properties:
-  - mandatory
+  - number
 - name: ExpnPrfFnd
-  properties:
-  - mandatory
-- name: EdrsFromBP
   properties:
   - mandatory
 - name: CreateTS
@@ -350,12 +215,7 @@ fields:
 - name: UpdateTS
   properties:
   - mandatory
-- name: U_SWA_PYAC
-  properties:
-  - mandatory
-- name: U_AGL_CIVI
-  properties:
-  - mandatory
+  - number
 - name: U_AGL_TAUXCOMMER
   properties:
   - mandatory

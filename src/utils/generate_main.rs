@@ -6,10 +6,10 @@ use std::path::Path;
 pub fn generate_main(generated_dir: &Path, file_stems: &[&str]) -> std::io::Result<()> {
     // Define the path for the `main.rs` file at the root of the generated folder
     let main_rs_path = generated_dir.join("main.rs");
-    
+
     // Create or open the `main.rs` file
     let mut main_rs_file = fs::File::create(main_rs_path)?;
-    
+
     // Generate the content for the `main.rs` file
     let mut main_rs_content = String::new();
 

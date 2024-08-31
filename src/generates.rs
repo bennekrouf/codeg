@@ -1,22 +1,30 @@
 
 use std::{env, fs};
 use std::io::Write;
+use dotenv::dotenv;
+use std::path::PathBuf;
 
-use crate::generate_cargo_toml::generate_cargo_toml;
-use crate::generate_endpoint::generate_endpoint;
-use crate::generate_main::generate_main;
-use crate::generate_proto::generate_proto;
+use crate::utils::generate_cargo_toml::generate_cargo_toml;
+use crate::utils::generate_endpoint::generate_endpoint;
+use crate::utils::generate_main::generate_main;
+use crate::utils::generate_proto::generate_proto;
 use crate::models::Endpoint;
 
 pub fn generates(endpoints: &[Endpoint], file_stem: &str) -> std::io::Result<()> {
-    let current_dir = env::current_dir()?;
+    // Load environment variables from the .env file
+    dotenv().ok();
+
+    // Get the generated folder from the environment variable
+    let generated_folder = env::var("GENERATED_FOLDER").unwrap_or_else(|_| "generated".to_string());
+
+    // Define the base output directory from the environment variable
+    let generated_dir = PathBuf::from(generated_folder);
+    let generated_src_dir = generated_dir.join("src");
 
     // Define the output directories, incorporating file_stem within the src subdirectory
-    let file_stem_dir = current_dir.join(format!("generated/src/{}", file_stem));
+    let file_stem_dir = generated_src_dir.join(file_stem);
     let code_dir = file_stem_dir.join("endpoints");
     let proto_dir = file_stem_dir.join("proto");
-    let generated_src_dir = current_dir.join("generated/src");
-    let generated_dir = current_dir.join("generated");
 
     // Ensure the directories exist
     if !code_dir.exists() {

@@ -1,48 +1,80 @@
+pub mod generated {
+    tonic::include_proto!("codeg"); // The proto package name
+}
 
-use std::fs;
-use std::ffi::OsStr;
-use generates::generates;
-use serde_yaml;
-use models::Entity;
-
+use std::env;
 mod models;
 mod generates;
-mod generate_proto;
-mod generate_main;
-mod generate_endpoint;
-mod generate_cargo_toml;
+mod generate_files;
+mod utils;
+use tokio::sync::Mutex;
+use messengerc::{connect_to_messenger_service, MessagingService};
+use generated::code_generator_server::{CodeGenerator, CodeGeneratorServer};
+use generated::{GenerateFilesRequest, GenerateFilesResponse};
+// use tracing::info;
+use std::sync::Arc;
+use std::path::Path;
+use dotenvy::from_path;
+// use generate_files::generate_files;
+use tonic::{transport::Server, Request, Response, Status};
+use crate::generate_files::generate_files;
 
-fn main() {
-    // Define the configuration directory
-    let config_dir = "configuration";
+#[derive(Debug, Default)]
+pub struct MyCodeGenerator;
 
-    // Iterate over each YAML file in the configuration directory
-    for entry in fs::read_dir(config_dir).expect("Failed to read configuration directory") {
-        let entry = entry.expect("Failed to read directory entry");
-        let path = entry.path();
-
-        // Check if the file has a .yml extension
-        if path.extension() == Some(OsStr::new("yml")) {
-            // Extract the file name without extension
-            let file_stem = path.file_stem()
-                .expect("Failed to get file stem")
-                .to_str()
-                .expect("Failed to convert file stem to str");
-
-            // Read the YAML file
-            let yaml_content = fs::read_to_string(&path)
-                .expect("Failed to read YAML file");
-
-            // Deserialize the YAML content into the Entity struct
-            let entity: Entity = serde_yaml::from_str(&yaml_content)
-                .expect("Failed to deserialize YAML content");
-
-            // Generate code files and .proto files for each endpoint
-            match generates(&entity.endpoints, file_stem) {
-                Ok(()) => println!("Code and .proto generation complete for {}.", file_stem),
-                Err(e) => eprintln!("Error generating code for {}: {}", file_stem, e),
-            }
+#[tonic::async_trait]
+impl CodeGenerator for MyCodeGenerator {
+    async fn generate_files(
+        &self,
+        _request: Request<GenerateFilesRequest>,
+    ) -> Result<Response<GenerateFilesResponse>, Status> {
+        // Call the `generate_files` function and handle any errors.
+        match generate_files() {
+            Ok(_) => Ok(Response::new(GenerateFilesResponse {
+                message: "File generation successful.".into(),
+                success: true,
+            })),
+            Err(e) => Ok(Response::new(GenerateFilesResponse {
+                message: format!("File generation failed: {}", e),
+                success: false,
+            })),
         }
     }
+}
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Load the environment variables from a custom file
+    let custom_env_path = Path::new("proto-definitions/.service");
+    from_path(custom_env_path).expect("Failed to load environment variables from custom path");
+
+    // Retrieve the necessary values from environment variables
+    let ip = env::var("CODEG_DOMAIN").expect("Missing 'domain' environment variable");
+    let port = env::var("CODEG_PORT").expect("Missing 'port' environment variable");
+    let addr = format!("{}:{}", ip, port).parse()?;
+
+    let tag = env::var("CODEG_TAG").expect("Missing 'tag' environment variable");
+
+    // Create and initialize the gRPC client for the messaging service
+    let messenger_client = connect_to_messenger_service().await
+        .ok_or("Failed to connect to messenger service")?;
+
+    let messaging_service = MessagingService::new(
+        Arc::new(Mutex::new(messenger_client)),
+        tag.clone(),
+    );
+
+    let mes = format!("Codeg listening on {}", &addr);
+    let _ = messaging_service.publish_message(mes.to_string(), Some(vec![tag])).await;
+
+    let code_generator = MyCodeGenerator::default();
+
+    // Start the gRPC server
+    Server::builder()
+        .add_service(CodeGeneratorServer::new(code_generator))
+        .serve(addr)
+        .await?;
+
+    Ok(())
 }
 
