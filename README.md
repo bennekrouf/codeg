@@ -1,4 +1,4 @@
-
+cargo update -p messengerc
 
 In the root of the folder, create a folder configuration where you put a yml files with the content like :
 
