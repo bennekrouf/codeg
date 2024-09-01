@@ -8,6 +8,7 @@ use crate::utils::generate_endpoint::generate_endpoint;
 use crate::utils::generate_main::generate_main;
 use crate::utils::generate_proto::generate_proto;
 use crate::models::Endpoint;
+use std::time::SystemTime;
 
 pub fn generates(tenant: &str, endpoints: &[Endpoint], file_stem: &str) -> std::io::Result<()> {
     // Load the environment variables from a custom file
@@ -24,8 +25,18 @@ pub fn generates(tenant: &str, endpoints: &[Endpoint], file_stem: &str) -> std::
 
     // Define the base output directory for the tenant
     let tenant_dir = PathBuf::from(&target_folder).join(tenant);
-    let tenant_src_dir = tenant_dir.join("src");
-    info!("Generated source directory for tenant '{}': {:?}", tenant, tenant_src_dir);
+
+    // Generate a timestamp for the new directory
+    let timestamp = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .expect("Failed to get current time")
+        .as_secs();
+
+    // Define the new directory name using the timestamp
+    let timestamped_dir_name = format!("generated_{}", timestamp);
+    let timestamped_dir = tenant_dir.join(timestamped_dir_name);
+
+    info!("Generated directory with timestamp: {:?}", timestamped_dir);
 
     // Ensure the tenant directories exist
     if !tenant_dir.exists() {
@@ -35,6 +46,20 @@ pub fn generates(tenant: &str, endpoints: &[Endpoint], file_stem: &str) -> std::
         info!("Tenant directory already exists: {:?}", tenant_dir);
     }
 
+    if !timestamped_dir.exists() {
+        fs::create_dir_all(&timestamped_dir)?;
+        info!("Created timestamped directory: {:?}", timestamped_dir);
+    } else {
+        info!("Timestamped directory already exists: {:?}", timestamped_dir);
+    }
+
+    // Define the output directories, incorporating file_stem within the timestamped directory
+    let tenant_src_dir = timestamped_dir.join("src");
+    let file_stem_dir = tenant_src_dir.join(file_stem);
+    let code_dir = file_stem_dir.join("endpoints");
+    let proto_dir = file_stem_dir.join("proto");
+
+    // Ensure the directories exist
     if !tenant_src_dir.exists() {
         fs::create_dir_all(&tenant_src_dir)?;
         info!("Created tenant source directory: {:?}", tenant_src_dir);
@@ -42,12 +67,6 @@ pub fn generates(tenant: &str, endpoints: &[Endpoint], file_stem: &str) -> std::
         info!("Tenant source directory already exists: {:?}", tenant_src_dir);
     }
 
-    // Define the output directories, incorporating file_stem within the tenant/src subdirectory
-    let file_stem_dir = tenant_src_dir.join(file_stem);
-    let code_dir = file_stem_dir.join("endpoints");
-    let proto_dir = file_stem_dir.join("proto");
-
-    // Ensure the directories exist
     if !code_dir.exists() {
         fs::create_dir_all(&code_dir)?;
         info!("Created code directory: {:?}", code_dir);
@@ -90,7 +109,7 @@ pub fn generates(tenant: &str, endpoints: &[Endpoint], file_stem: &str) -> std::
     mod_rs_file.write_all(mod_rs_content.as_bytes())?;
     info!("Written mod.rs file at {:?}", mod_rs_path);
 
-    // Generate a `mod.rs` file in the `tenant/src/[file_stem]` directory that contains "mod endpoints;"
+    // Generate a `mod.rs` file in the `timestamped/src/[file_stem]` directory that contains "mod endpoints;"
     let file_stem_mod_rs_path = file_stem_dir.join("mod.rs");
     let mut file_stem_mod_rs_file = fs::File::create(&file_stem_mod_rs_path)?;
     file_stem_mod_rs_file.write_all(b"mod endpoints;\n")?;
@@ -107,9 +126,9 @@ pub fn generates(tenant: &str, endpoints: &[Endpoint], file_stem: &str) -> std::
     info!("Generated main.rs in {:?}", tenant_src_dir);
 
     // Generate the Cargo.toml file if it doesn't already exist
-    let cargo_toml_path = tenant_dir.join("Cargo.toml");
+    let cargo_toml_path = timestamped_dir.join("Cargo.toml");
     if !cargo_toml_path.exists() {
-        if let Err(e) = generate_cargo_toml(file_stem, &tenant_dir) {
+        if let Err(e) = generate_cargo_toml(file_stem, &timestamped_dir) {
             error!("Failed to generate Cargo.toml: {:?}", e);
             return Err(e);
         }

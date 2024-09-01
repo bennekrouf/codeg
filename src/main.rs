@@ -6,12 +6,12 @@ mod models;
 mod generate_files;
 mod utils;
 
+use std::sync::Arc;
 use tokio::sync::Mutex;
 use messengerc::{connect_to_messenger_service, MessagingService};
 use generated::code_generator_server::{CodeGenerator, CodeGeneratorServer};
 use generated::{GenerateFilesRequest, GenerateFilesResponse};
 use tracing::{info, error};
-use std::sync::Arc;
 use std::path::Path;
 use dotenvy::from_path;
 use std::env;
