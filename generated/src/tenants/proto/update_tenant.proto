@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+service update_tenant {
+    rpc update_tenant (Empty) returns (Empty);
+}
+
+message Empty {}

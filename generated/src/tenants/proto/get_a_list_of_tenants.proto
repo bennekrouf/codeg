@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+service get_a_list_of_tenants {
+    rpc get_a_list_of_tenants (Empty) returns (Empty);
+}
+
+message Empty {}

@@ -11,10 +11,10 @@ fn main() {
     from_path(custom_env_path).expect("Failed to load environment variables from custom path");
 
     // Get the generated folder from the environment variable
-    let generated_folder = env::var("TARGET_FOLDER").unwrap_or_else(|_| "generated".to_string());
+    let target_folder = env::var("TARGET_FOLDER").unwrap_or_else(|_| "generated".to_string());
 
     // Ensure the directory exists
-    let generated_dir = PathBuf::from(generated_folder);
+    let generated_dir = PathBuf::from(target_folder);
     if !generated_dir.exists() {
         eprintln!("Error: The '{:?}' directory does not exist.", generated_dir);
         std::process::exit(1);

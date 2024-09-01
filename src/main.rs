@@ -27,10 +27,21 @@ pub struct MyCodeGenerator;
 impl CodeGenerator for MyCodeGenerator {
     async fn generate_files(
         &self,
-        _request: Request<GenerateFilesRequest>,
+        request: Request<GenerateFilesRequest>,
     ) -> Result<Response<GenerateFilesResponse>, Status> {
+        let tenant = request.into_inner().tenant;
+
+        // Check if the tenant field is provided
+        if tenant.is_empty() {
+            error!("Attempt to generate files without providing a tenant.");
+            return Ok(Response::new(GenerateFilesResponse {
+                message: "Tenant is required".into(),
+                success: false,
+            }));
+        }
+
         // Call the `generate_files` function and handle any errors.
-        match generate_files() {
+        match generate_files(&tenant) {
             Ok(_) => Ok(Response::new(GenerateFilesResponse {
                 message: "File generation successful.".into(),
                 success: true,

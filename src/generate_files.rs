@@ -6,7 +6,8 @@ use serde_yaml;
 use crate::models::Entity;
 use tracing::{info, error, warn};
 
-pub fn generate_files() -> Result<(), Box<dyn std::error::Error>> {
+pub fn generate_files(tenant: &str) -> Result<(), Box<dyn std::error::Error>> {
+    tracing::info!("Generating files for tenant: {}", tenant);
     // Retrieve the generation folder from environment variables
     let config_dir = match env::var("YML_FOLDER") {
         Ok(dir) => {
@@ -60,7 +61,7 @@ pub fn generate_files() -> Result<(), Box<dyn std::error::Error>> {
             };
 
             // Generate code files and .proto files for each endpoint
-            match generates(&entity.endpoints, file_stem) {
+            match generates(&tenant, &entity.endpoints, file_stem) {
                 Ok(()) => info!("Code and .proto generation complete for {}.", file_stem),
                 Err(e) => error!("Error generating code for {}: {:?}", file_stem, e),
             }

@@ -1,35 +1,49 @@
 
 use std::{env, fs};
 use std::io::Write;
-use dotenv::dotenv;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use tracing::{info, error};
-
 use crate::utils::generate_cargo_toml::generate_cargo_toml;
 use crate::utils::generate_endpoint::generate_endpoint;
 use crate::utils::generate_main::generate_main;
 use crate::utils::generate_proto::generate_proto;
 use crate::models::Endpoint;
 
-pub fn generates(endpoints: &[Endpoint], file_stem: &str) -> std::io::Result<()> {
-    // Load environment variables from the .env file
-    dotenv().ok();
+pub fn generates(tenant: &str, endpoints: &[Endpoint], file_stem: &str) -> std::io::Result<()> {
+    // Load the environment variables from a custom file
+    let custom_env_path = Path::new("proto-definitions/.service");
+    dotenv::from_path(custom_env_path).expect("Failed to load environment variables from custom path");
     info!("Environment variables loaded from .env file.");
 
     // Get the generated folder from the environment variable
-    let generated_folder = env::var("GENERATED_FOLDER").unwrap_or_else(|_| {
-        error!("'GENERATED_FOLDER' environment variable not set. Using default 'generated' folder.");
+    let target_folder = env::var("TARGET_FOLDER").unwrap_or_else(|_| {
+        error!("'TARGET_FOLDER' environment variable not set. Using default 'generated' folder.");
         "generated".to_string()
     });
-    info!("Using '{}' as the generated folder.", generated_folder);
+    info!("Using '{}' as the generated folder.", target_folder);
 
-    // Define the base output directory from the environment variable
-    let generated_dir = PathBuf::from(&generated_folder);
-    let generated_src_dir = generated_dir.join("src");
-    info!("Generated source directory: {:?}", generated_src_dir);
+    // Define the base output directory for the tenant
+    let tenant_dir = PathBuf::from(&target_folder).join(tenant);
+    let tenant_src_dir = tenant_dir.join("src");
+    info!("Generated source directory for tenant '{}': {:?}", tenant, tenant_src_dir);
 
-    // Define the output directories, incorporating file_stem within the src subdirectory
-    let file_stem_dir = generated_src_dir.join(file_stem);
+    // Ensure the tenant directories exist
+    if !tenant_dir.exists() {
+        fs::create_dir_all(&tenant_dir)?;
+        info!("Created tenant directory: {:?}", tenant_dir);
+    } else {
+        info!("Tenant directory already exists: {:?}", tenant_dir);
+    }
+
+    if !tenant_src_dir.exists() {
+        fs::create_dir_all(&tenant_src_dir)?;
+        info!("Created tenant source directory: {:?}", tenant_src_dir);
+    } else {
+        info!("Tenant source directory already exists: {:?}", tenant_src_dir);
+    }
+
+    // Define the output directories, incorporating file_stem within the tenant/src subdirectory
+    let file_stem_dir = tenant_src_dir.join(file_stem);
     let code_dir = file_stem_dir.join("endpoints");
     let proto_dir = file_stem_dir.join("proto");
 
@@ -76,7 +90,7 @@ pub fn generates(endpoints: &[Endpoint], file_stem: &str) -> std::io::Result<()>
     mod_rs_file.write_all(mod_rs_content.as_bytes())?;
     info!("Written mod.rs file at {:?}", mod_rs_path);
 
-    // Generate a `mod.rs` file in the `generated/src/[file_stem]` directory that contains "mod endpoints;"
+    // Generate a `mod.rs` file in the `tenant/src/[file_stem]` directory that contains "mod endpoints;"
     let file_stem_mod_rs_path = file_stem_dir.join("mod.rs");
     let mut file_stem_mod_rs_file = fs::File::create(&file_stem_mod_rs_path)?;
     file_stem_mod_rs_file.write_all(b"mod endpoints;\n")?;
@@ -86,16 +100,16 @@ pub fn generates(endpoints: &[Endpoint], file_stem: &str) -> std::io::Result<()>
     let file_stems = vec![file_stem];
 
     // Generate the main.rs file in the `src` subdirectory
-    if let Err(e) = generate_main(&generated_src_dir, &file_stems) {
+    if let Err(e) = generate_main(&tenant_src_dir, &file_stems) {
         error!("Failed to generate main.rs: {:?}", e);
         return Err(e);
     }
-    info!("Generated main.rs in {:?}", generated_src_dir);
+    info!("Generated main.rs in {:?}", tenant_src_dir);
 
     // Generate the Cargo.toml file if it doesn't already exist
-    let cargo_toml_path = generated_dir.join("Cargo.toml");
+    let cargo_toml_path = tenant_dir.join("Cargo.toml");
     if !cargo_toml_path.exists() {
-        if let Err(e) = generate_cargo_toml(file_stem, &generated_dir) {
+        if let Err(e) = generate_cargo_toml(file_stem, &tenant_dir) {
             error!("Failed to generate Cargo.toml: {:?}", e);
             return Err(e);
         }
@@ -104,7 +118,7 @@ pub fn generates(endpoints: &[Endpoint], file_stem: &str) -> std::io::Result<()>
         info!("Cargo.toml already exists at {:?}", cargo_toml_path);
     }
 
-    info!("File generation for '{}' completed successfully.", file_stem);
+    info!("File generation for tenant '{}' and file_stem '{}' completed successfully.", tenant, file_stem);
     Ok(())
 }
 

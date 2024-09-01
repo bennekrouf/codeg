@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+service delete_tenant {
+    rpc delete_tenant (Empty) returns (Empty);
+}
+
+message Empty {}
