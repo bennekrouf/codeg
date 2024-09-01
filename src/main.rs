@@ -10,7 +10,7 @@ use tokio::sync::Mutex;
 use messengerc::{connect_to_messenger_service, MessagingService};
 use generated::code_generator_server::{CodeGenerator, CodeGeneratorServer};
 use generated::{GenerateFilesRequest, GenerateFilesResponse};
-// use tracing::info;
+use tracing::{info, error};
 use std::sync::Arc;
 use std::path::Path;
 use dotenvy::from_path;
@@ -29,27 +29,33 @@ impl CodeGenerator for MyCodeGenerator {
         &self,
         request: Request<GenerateFilesRequest>,
     ) -> Result<Response<GenerateFilesResponse>, Status> {
+        // Extract the tenant from the request
         let tenant = request.into_inner().tenant;
 
         // Check if the tenant field is provided
         if tenant.is_empty() {
+            // Log an error when the tenant is missing
             error!("Attempt to generate files without providing a tenant.");
+
             return Ok(Response::new(GenerateFilesResponse {
                 message: "Tenant is required".into(),
                 success: false,
             }));
         }
 
-        // Call the `generate_files` function and handle any errors.
+        // Call the `generate_files` function with the tenant as an argument
         match generate_files(&tenant) {
             Ok(_) => Ok(Response::new(GenerateFilesResponse {
                 message: "File generation successful.".into(),
                 success: true,
             })),
-            Err(e) => Ok(Response::new(GenerateFilesResponse {
-                message: format!("File generation failed: {}", e),
-                success: false,
-            })),
+            Err(e) => {
+                error!("File generation failed for tenant {}: {:?}", tenant, e);
+                Ok(Response::new(GenerateFilesResponse {
+                    message: format!("File generation failed: {}", e),
+                    success: false,
+                }))
+            }
         }
     }
 }

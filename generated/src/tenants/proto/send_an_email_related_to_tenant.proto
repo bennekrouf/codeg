@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-service send_an_email_related_to_tenant {
-    rpc send_an_email_related_to_tenant (Empty) returns (Empty);
-}
-
-message Empty {}
