@@ -8,7 +8,7 @@ use crate::utils::generate_endpoint::generate_endpoint;
 use crate::utils::generate_main::generate_main;
 use crate::utils::generate_proto::generate_proto;
 use crate::models::Endpoint;
-use std::time::SystemTime;
+use chrono::Local;
 
 pub fn generates(tenant: &str, endpoints: &[Endpoint], file_stem: &str) -> std::io::Result<()> {
     // Load the environment variables from a custom file
@@ -26,17 +26,14 @@ pub fn generates(tenant: &str, endpoints: &[Endpoint], file_stem: &str) -> std::
     // Define the base output directory for the tenant
     let tenant_dir = PathBuf::from(&target_folder).join(tenant);
 
-    // Generate a timestamp for the new directory
-    let timestamp = SystemTime::now()
-        .duration_since(SystemTime::UNIX_EPOCH)
-        .expect("Failed to get current time")
-        .as_secs();
+    // Generate a human-readable timestamp for the new directory (format: YYYY-MM-DD_HH-MM-SS)
+    let datetime = Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
 
-    // Define the new directory name using the timestamp
-    let timestamped_dir_name = format!("generated_{}", timestamp);
+    // Define the new directory name using the datetime string
+    let timestamped_dir_name = format!("generated_{}", datetime);
     let timestamped_dir = tenant_dir.join(timestamped_dir_name);
 
-    info!("Generated directory with timestamp: {:?}", timestamped_dir);
+    info!("Generated directory with datetime: {:?}", timestamped_dir);
 
     // Ensure the tenant directories exist
     if !tenant_dir.exists() {

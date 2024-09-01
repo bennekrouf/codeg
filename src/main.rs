@@ -11,12 +11,11 @@ use tokio::sync::Mutex;
 use messengerc::{connect_to_messenger_service, MessagingService};
 use generated::code_generator_server::{CodeGenerator, CodeGeneratorServer};
 use generated::{GenerateFilesRequest, GenerateFilesResponse};
-use tracing::{info, error};
+use tracing::error;
 use std::path::Path;
 use dotenvy::from_path;
 use std::env;
 
-// use generate_files::generate_files;
 use tonic::{transport::Server, Request, Response, Status};
 use crate::generate_files::generate_files;
 

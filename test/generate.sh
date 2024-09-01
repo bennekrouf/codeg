@@ -11,7 +11,7 @@ PROTO_FILE_PATH="proto-definitions/codeg.proto"
 SERVICE_METHOD="codeg.CodeGenerator/GenerateFiles"
 
 # Tenant to be passed in the request
-TENANT="gibro"
+TENANT="mayorana"
 
 # Test the gRPC service using grpcurl
 grpcurl -plaintext -proto $PROTO_FILE_PATH -d "{\"tenant\":\"$TENANT\"}" $SERVER_ADDRESS $SERVICE_METHOD
